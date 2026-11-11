@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ app_name }} — {{ app_name_en }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="has-side page-home">
+  {% include "_sidebar.html" %}
+  <div class="shell">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">語</span>
+      <div>
+        <p class="name">{{ app_name }}</p>
+        <p class="name-en">{{ app_name_en }}</p>
+      </div>
+    </div>
+    <p class="stage">Stage 2 · 読み込み</p>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">卒業制作</p>
+      <h1>専門教科書から用語を取り出し、<br>覚えられるカードにする</h1>
+      <p class="lead">
+        外国語で書かれた教科書をアップロードすると、重要な用語と定義を抽出して
+        フラッシュカード用の辞書を作ります。
+      </p>
+    </section>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <section class="panel">
+      <h2>ファイルをアップロード</h2>
+      <p class="hint">デジタルPDFはそのまま読みます。スキャンや画像は OCR で文字を取ります。</p>
+      <form class="upload" id="upload-form" action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+        <label class="drop" id="drop-label">
+          <strong>PDF / JPEG / PNG</strong>
+          <span id="file-label">ファイルを選択する</span>
+          <input id="file-input" type="file" name="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" required>
+        </label>
+        <button type="submit" id="submit-btn">テキストを取り出す</button>
+      </form>
+    </section>
+
+    <section class="steps">
+      <article class="current">
+        <span>1</span>
+        <h3>読み込む</h3>
+        <p>教科書のPDFからテキストを取り出す</p>
+      </article>
+      <article>
+        <span>2</span>
+        <h3>抜き出す</h3>
+        <p>用語と定義を見つけて保存する</p>
+      </article>
+      <article>
+        <span>3</span>
+        <h3>覚える</h3>
+        <p>カード表示と Anki 用 CSV</p>
+      </article>
+    </section>
+  </main>
+  <div class="wait" id="wait" hidden>
+    <div class="wait-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="wait-title">テキストを取り出しています</p>
+      <p class="wait-text">スキャンの場合は数分かかることがあります。<br>このまま待ってください。ウィンドウを閉じないでください。</p>
+      <p class="wait-time">経過時間：<span id="wait-sec">0</span>秒</p>
+    </div>
+  </div>
+  <script>
+    const input = document.getElementById("file-input");
+    const label = document.getElementById("file-label");
+    const form = document.getElementById("upload-form");
+    const wait = document.getElementById("wait");
+    const waitSec = document.getElementById("wait-sec");
+    const submitBtn = document.getElementById("submit-btn");
+
+    input.addEventListener("change", () => {
+      label.textContent = input.files.length ? input.files[0].name : "ファイルを選択する";
+    });
+
+    form.addEventListener("submit", () => {
+      if (!input.files.length) return;
+      wait.hidden = false;
+      submitBtn.disabled = true;
+      let seconds = 0;
+      setInterval(() => {
+        seconds += 1;
+        waitSec.textContent = String(seconds);
+      }, 1000);
+    });
+  </script>
+  </div>
+</body>
+</html>

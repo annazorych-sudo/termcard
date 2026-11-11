@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用語 — {{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="has-side page-shelf">
+  {% include "_sidebar.html" %}
+  <div class="shell">
+  <header class="top">
+    <div class="brand">
+      <span class="mark">語</span>
+      <div>
+        <p class="name">{{ app_name }}</p>
+        <p class="name-en">{{ app_name_en }}</p>
+      </div>
+    </div>
+    <p class="stage">Stage 4 · 用語</p>
+  </header>
+
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if not document %}
+      <section class="hero">
+        <p class="eyebrow">読み込み</p>
+        <h1>読み込みに問題があります</h1>
+        <p class="lead">{{ original_name }}</p>
+      </section>
+      {% if result and result.ocr_error %}
+        <p class="note">{{ result.ocr_error }}</p>
+      {% else %}
+        <p class="note">文字を取り出せませんでした。別のファイルを試してください。</p>
+      {% endif %}
+    {% else %}
+      <section class="hero">
+        <p class="eyebrow">原文の用語</p>
+        <h1>{{ document.topic or "教科書を読み込みました" }}</h1>
+        <p class="lead">{{ document.original_name }}</p>
+      </section>
+
+      <section class="panel">
+        <h2>この教材</h2>
+        <section class="meta">
+          <p><strong>ページ</strong> {{ document.page_count }}</p>
+          <p><strong>文字数</strong> {{ document.char_count }}</p>
+          <p><strong>原文の言語</strong> {{ lang_labels.get(document.source_lang, document.source_lang) }}</p>
+          <p><strong>読み取り</strong> {{ "OCR" if document.ocr_used else "デジタルPDF" }}</p>
+        </section>
+      </section>
+
+      <form id="card-form" action="{{ url_for('prepare_cards', document_id=document.id) }}" method="post">
+        <section class="panel">
+          <h2>原文の主な用語（{{ document.terms|length }}）</h2>
+          <p class="hint">チェックした語だけがカードになります。外した語は一覧に残ります。</p>
+          {% if document.terms %}
+            <ul class="terms">
+              {% for item in document.terms %}
+                <li>
+                  <label class="term-pick">
+                    <input type="checkbox" name="term_id" value="{{ item.id }}" {% if item.selected %}checked{% endif %}>
+                    <span>
+                      <p class="term-name">{{ item.term }}</p>
+                      <p class="term-def">{{ item.definition }}</p>
+                    </span>
+                  </label>
+                </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="hint">用語を自動では見つけられませんでした。</p>
+          {% endif %}
+        </section>
+
+        {% if document.terms %}
+          <section class="panel">
+            <h2>カードにする言語</h2>
+            <p class="hint">カードのうらと、あとで出す Anki CSV の訳に使います。</p>
+            <div class="lang-form">
+              <select name="target_lang" required>
+                <option value="" disabled {% if not document.target_lang %}selected{% endif %}>言語を選ぶ</option>
+                {% for code, label in target_langs %}
+                  <option value="{{ code }}" {% if document.target_lang == code %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="actions">
+              <button type="submit">選んだ言語でカードを見る</button>
+              <button type="submit" formaction="{{ url_for('anki_csv', document_id=document.id) }}">Anki用CSVを作る</button>
+            </div>
+          </section>
+        {% endif %}
+      </form>
+    {% endif %}
+
+    <p class="back"><a href="{{ url_for('index') }}">別のファイルを試す</a></p>
+  </main>
+  <div class="wait" id="wait" hidden>
+    <div class="wait-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <p class="wait-title">カードを翻訳しています</p>
+      <p class="wait-text">このまま待ってください。ウィンドウを閉じないでください。</p>
+    </div>
+  </div>
+  <script>
+    const form = document.getElementById("card-form");
+    const wait = document.getElementById("wait");
+    if (form) {
+      form.addEventListener("submit", () => { wait.hidden = false; });
+    }
+  </script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<aside class="side">
+  <a class="side-brand" href="{{ url_for('index') }}">
+    <span class="mark">語</span>
+    <span>
+      <strong>{{ app_name }}</strong>
+      <small>{{ app_name_en }}</small>
+    </span>
+  </a>
+  <nav>
+    <a href="{{ url_for('index') }}" class="{{ 'is-on' if nav_active == 'upload' else '' }}">新しい教科書</a>
+    <a href="{{ url_for('library') }}" class="{{ 'is-on' if nav_active == 'library' else '' }}">自分のカード</a>
+    <a href="{{ url_for('anki_history') }}" class="{{ 'is-on' if nav_active == 'anki' else '' }}">Anki用CSV</a>
+  </nav>
+</aside>
