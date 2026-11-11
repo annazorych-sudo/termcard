@@ -3,9 +3,11 @@
 **Upload scans of a textbook — get flashcards of its key terms, ready for Anki.**
 教科書のスキャンをアップロードするだけで、重要用語の単語カードを自動作成し、Ankiに取り込めるアプリです。
 
-![TermCard screenshot](docs/screenshot_main.png)
+!\[TermCard screenshot](docs/screenshot\_main.png)
 
----
+!\[Cards](docs/screenshot\_cards.png)
+
+\---
 
 ## Why I built it / 制作のきっかけ
 
@@ -15,13 +17,13 @@ When I started college in Japan, we got a huge stack of textbooks full of techni
 
 ## Features / 主な機能
 
-- Upload PDF or image scans (OCR with Tesseract for Japanese and English) / PDF・画像のアップロード（Tesseract OCR）
-- Detects the language and topic of a chapter / 言語とテーマの自動判定
-- Extracts key terms with definitions (glossary and in-text definitions, Wikipedia, optional Gemini API) / 重要用語と定義の抽出
-- Translates cards into other languages (Japanese, English, Russian, Ukrainian, Chinese, …) / カードの多言語翻訳
-- Adds readings (furigana) for Japanese terms / 日本語用語の読み仮名
-- Library of documents and decks, card selection / ドキュメント・デッキの管理
-- Export to Anki as CSV / Anki用CSVエクスポート
+* Upload PDF or image scans (OCR with Tesseract for Japanese and English) / PDF・画像のアップロード（Tesseract OCR）
+* Detects the language and topic of a chapter / 言語とテーマの自動判定
+* Extracts key terms with definitions (glossary and in-text definitions, Wikipedia, optional Gemini API) / 重要用語と定義の抽出
+* Translates cards into other languages (Japanese, English, Russian, Ukrainian, Chinese, …) / カードの多言語翻訳
+* Adds readings (furigana) for Japanese terms / 日本語用語の読み仮名
+* Library of documents and decks, card selection / ドキュメント・デッキの管理
+* Export to Anki as CSV / Anki用CSVエクスポート
 
 ## Tech stack / 使用技術
 
@@ -32,15 +34,16 @@ Python, Flask, Flask-SQLAlchemy (SQLite by default, MySQL supported), Jinja2 tem
 ```bash
 cd app
 python -m venv .venv
-.venv\Scripts\activate        # Windows (macOS/Linux: source .venv/bin/activate)
+.venv\\Scripts\\activate        # Windows (macOS/Linux: source .venv/bin/activate)
 pip install -r requirements.txt
 python app.py
 ```
 
 Tesseract OCR must be installed (with Japanese language data).
-Optional: create `app/.env` with `GEMINI_API_KEY=...` for better term extraction and translation.
+Optional: create `app/.env` with `GEMINI\_API\_KEY=...` for better term extraction and translation.
 The `.env` file is not included in this repository.
 
 ## Author / 作者
 
 Anna Zorych — [LinkedIn](https://www.linkedin.com/in/anna-zorych/)
+
